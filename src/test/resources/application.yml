@@ -1,0 +1,10 @@
+spring:
+  r2dbc:
+    url: r2dbc:h2:mem:///person_test;DB_CLOSE_DELAY=-1;MODE=MySQL
+    username: sa
+    password: ""
+  sql:
+    init:
+      mode: always
+appDescription: "Pragma Reactive Person"
+appVersion: "1.0.0"

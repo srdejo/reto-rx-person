@@ -1,0 +1,14 @@
+server:
+  port: 8081
+
+spring:
+  r2dbc:
+    url: r2dbc:mysql://${DB_HOST:localhost}:${DB_PORT:3306}/${DB_NAME:person_db}
+    username: ${DB_USERNAME:root}
+    password: ${DB_PASSWORD:root}
+  sql:
+    init:
+      mode: always
+
+appDescription: "Pragma Reactive Person"
+appVersion: "1.0.0"
