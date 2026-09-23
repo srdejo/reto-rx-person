@@ -7,6 +7,7 @@ import com.pragma.person.domain.model.BootcampPersonModel;
 import com.pragma.person.domain.model.BootcampSummary;
 import com.pragma.person.domain.spi.IBootcampClientPort;
 import com.pragma.person.domain.spi.IBootcampPersonPersistencePort;
+import com.pragma.person.domain.spi.IReportClientPort;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -21,11 +22,14 @@ public class BootcampPersonUseCase implements IBootcampPersonServicePort {
 
     private final IBootcampPersonPersistencePort bootcampPersonPersistencePort;
     private final IBootcampClientPort bootcampClientPort;
+    private final IReportClientPort reportClientPort;
 
     public BootcampPersonUseCase(IBootcampPersonPersistencePort bootcampPersonPersistencePort,
-                                  IBootcampClientPort bootcampClientPort) {
+                                  IBootcampClientPort bootcampClientPort,
+                                  IReportClientPort reportClientPort) {
         this.bootcampPersonPersistencePort = bootcampPersonPersistencePort;
         this.bootcampClientPort = bootcampClientPort;
+        this.reportClientPort = reportClientPort;
     }
 
     @Override
@@ -33,7 +37,12 @@ public class BootcampPersonUseCase implements IBootcampPersonServicePort {
         return bootcampClientPort.getBootcamp(bootcampId)
                 .flatMap(summary -> bootcampPersonPersistencePort.findActiveByPersonId(personId)
                         .collectList()
-                        .flatMap(activeEnrollments -> validateAndSave(personId, bootcampId, summary, activeEnrollments)));
+                        .flatMap(activeEnrollments -> validateAndSave(personId, bootcampId, summary, activeEnrollments))
+                        .flatMap(saved -> Mono.deferContextual(ctx -> {
+                            // Fire-and-forget: propagate the context so the report call keeps the auth token
+                            publishReport(summary).contextWrite(ctx).subscribe();
+                            return Mono.just(saved);
+                        })));
     }
 
     @Override
@@ -66,6 +75,18 @@ public class BootcampPersonUseCase implements IBootcampPersonServicePort {
                 summary.durationDays());
 
         return bootcampPersonPersistencePort.save(newEnrollment);
+    }
+
+    private Mono<Void> publishReport(BootcampSummary bootcamp) {
+        return bootcampPersonPersistencePort
+                .countByBootcampId(bootcamp.id())
+                .flatMap(enrolledCount ->
+                        reportClientPort.sendBootcampReport(
+                                bootcamp,
+                                enrolledCount
+                        )
+                )
+                .onErrorComplete();
     }
 
     private boolean rangesOverlap(LocalDate start1, LocalDate end1, LocalDate start2, LocalDate end2) {
