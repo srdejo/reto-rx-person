@@ -108,7 +108,8 @@ public class BeanConfiguration {
 
     @Bean
     public IBootcampPersonServicePort bootcampPersonServicePort() {
-        return new BootcampPersonUseCase(bootcampPersonPersistencePort(), bootcampClientPort(), reportClientPort());
+        return new BootcampPersonUseCase(bootcampPersonPersistencePort(), personPersistencePort(),
+                bootcampClientPort(), reportClientPort());
     }
 
     @Bean
