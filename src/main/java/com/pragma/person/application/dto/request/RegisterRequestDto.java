@@ -1,6 +1,5 @@
 package com.pragma.person.application.dto.request;
 
-import com.pragma.person.domain.model.Role;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -12,7 +11,7 @@ import java.time.LocalDate;
 
 @Getter
 @Setter
-public class PersonRequestDto {
+public class RegisterRequestDto {
     @NotBlank
     @Size(max = 50)
     private String name;
@@ -26,6 +25,4 @@ public class PersonRequestDto {
 
     @NotNull
     private LocalDate birthDate;
-
-    private Role role = Role.USER;
 }

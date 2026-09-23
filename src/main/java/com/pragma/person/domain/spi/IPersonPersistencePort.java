@@ -8,4 +8,6 @@ public interface IPersonPersistencePort {
     Mono<PersonModel> savePerson(PersonModel personModel);
 
     Flux<PersonModel> getAllPersons();
+
+    Mono<PersonModel> findByEmail(String email);
 }

@@ -13,6 +13,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -33,6 +34,7 @@ public class PersonRestController {
             @ApiResponse(responseCode = "201", description = "Person created", content = @Content),
             @ApiResponse(responseCode = "400", description = "Invalid request", content = @Content)
     })
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/")
     public Mono<ResponseEntity<Void>> savePerson(@Valid @RequestBody PersonRequestDto personRequestDto) {
         return personHandler.savePerson(personRequestDto)
@@ -46,6 +48,7 @@ public class PersonRestController {
                             array = @ArraySchema(schema = @Schema(implementation = PersonResponseDto.class)))),
             @ApiResponse(responseCode = "404", description = "No data found", content = @Content)
     })
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/")
     public Flux<PersonResponseDto> getAllPersons() {
         return personHandler.getAllPersons();
