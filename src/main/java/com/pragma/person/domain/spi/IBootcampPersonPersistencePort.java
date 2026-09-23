@@ -11,4 +11,6 @@ public interface IBootcampPersonPersistencePort {
     Flux<BootcampPersonModel> findActiveByPersonId(Long personId);
 
     Flux<BootcampPersonModel> findByPersonId(Long personId);
+
+    Mono<Long> countByBootcampId(Long bootcampId);
 }

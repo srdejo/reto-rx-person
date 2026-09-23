@@ -7,6 +7,7 @@ import com.pragma.person.domain.spi.IBootcampClientPort;
 import com.pragma.person.domain.spi.IBootcampPersonPersistencePort;
 import com.pragma.person.domain.spi.IPasswordHasherPort;
 import com.pragma.person.domain.spi.IPersonPersistencePort;
+import com.pragma.person.domain.spi.IReportClientPort;
 import com.pragma.person.domain.spi.ITokenIssuerPort;
 import com.pragma.person.domain.usecase.AuthUseCase;
 import com.pragma.person.domain.usecase.BootcampPersonUseCase;
@@ -18,6 +19,9 @@ import com.pragma.person.infrastructure.out.r2dbc.mapper.IPersonEntityMapper;
 import com.pragma.person.infrastructure.out.r2dbc.repository.IBootcampPersonRepository;
 import com.pragma.person.infrastructure.out.r2dbc.repository.IPersonRepository;
 import com.pragma.person.infrastructure.out.webclient.adapter.BootcampWebClientAdapter;
+import com.pragma.person.infrastructure.out.webclient.adapter.ReportWebClientAdapter;
+import com.pragma.person.infrastructure.out.webclient.mapper.IBootcampClientMapper;
+import com.pragma.person.infrastructure.out.webclient.mapper.IReportClientMapper;
 import com.pragma.person.infrastructure.security.JwtAuthenticationWebFilter;
 import com.pragma.person.infrastructure.security.JwtService;
 import com.pragma.person.infrastructure.security.adapter.BCryptPasswordHasherAdapter;
@@ -36,6 +40,8 @@ public class BeanConfiguration {
     private final IPersonEntityMapper personEntityMapper;
     private final IBootcampPersonRepository bootcampPersonRepository;
     private final IBootcampPersonEntityMapper bootcampPersonEntityMapper;
+    private final IBootcampClientMapper bootcampClientMapper;
+    private final IReportClientMapper reportClientMapper;
     private final PasswordEncoder passwordEncoder;
 
     @Value("${jwt.secret}")
@@ -46,6 +52,9 @@ public class BeanConfiguration {
 
     @Value("${webclient.bootcamp}")
     private String bootcampUrl;
+
+    @Value("${webclient.report}")
+    private String reportUrl;
 
     @Bean
     public IPersonPersistencePort personPersistencePort() {
@@ -89,12 +98,17 @@ public class BeanConfiguration {
 
     @Bean
     public IBootcampClientPort bootcampClientPort() {
-        return new BootcampWebClientAdapter(WebClient.builder(), bootcampUrl);
+        return new BootcampWebClientAdapter(WebClient.builder(), bootcampUrl, bootcampClientMapper);
+    }
+
+    @Bean
+    public IReportClientPort reportClientPort() {
+        return new ReportWebClientAdapter(WebClient.builder(), reportUrl, reportClientMapper);
     }
 
     @Bean
     public IBootcampPersonServicePort bootcampPersonServicePort() {
-        return new BootcampPersonUseCase(bootcampPersonPersistencePort(), bootcampClientPort());
+        return new BootcampPersonUseCase(bootcampPersonPersistencePort(), bootcampClientPort(), reportClientPort());
     }
 
     @Bean

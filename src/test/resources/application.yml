@@ -12,6 +12,7 @@ jwt:
 
 webclient:
   bootcamp: ${WEBCLIENT_BOOTCAMP:http://localhost:8082/api/v1/bootcamps}
+  report: ${WEBCLIENT_REPORT:http://localhost:8085/api/v1/reports/bootcamps}
 
 admin:
   email: ${ADMIN_EMAIL:admin@pragma.com}
