@@ -5,6 +5,7 @@ import com.pragma.person.application.dto.request.RegisterRequestDto;
 import com.pragma.person.application.dto.response.LoginResponseDto;
 import com.pragma.person.application.handler.IAuthHandler;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirements;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Mono;
 
 @RestController
+@SecurityRequirements
 @RequestMapping("/api/v1/auth")
 @RequiredArgsConstructor
 public class AuthController {
