@@ -10,5 +10,16 @@ spring:
     init:
       mode: always
 
+jwt:
+  secret: ${JWT_SECRET:change-this-secret-change-this-secret-32bytes}
+  expiration-ms: ${JWT_EXPIRATION_MS:86400000}
+
+webclient:
+  bootcamp: ${WEBCLIENT_BOOTCAMP:http://localhost:8082/api/v1/bootcamps}
+
+admin:
+  email: ${ADMIN_EMAIL:admin@pragma.com}
+  password: ${ADMIN_PASSWORD:Admin123*}
+
 appDescription: "Pragma Reactive Person"
 appVersion: "1.0.0"

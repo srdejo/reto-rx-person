@@ -5,17 +5,12 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.LocalDate;
-
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class PersonModel {
-    private Long id;
-    private String name;
-    private String email;
-    private String password;
-    private LocalDate birthDate;
+public class LoginResult {
+    private String token;
     private Role role;
+    private Long personId;
 }
